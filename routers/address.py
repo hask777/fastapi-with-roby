@@ -30,6 +30,7 @@ class Address(BaseModel):
     country: str
     state: str
     postalcode: str
+    apt_num:Optional[int]
 
 
 @router.post("/")
@@ -43,6 +44,7 @@ async def create_address(address: Address, user: dict = Depends(get_current_user
     address_model.state = address.state
     address_model.country = address.country
     address_model.postalcode = address.postalcode
+    address_model.apt_num = address.apt_num
 
     db.add(address_model)
     db.flush()
