@@ -1,7 +1,7 @@
 import sys
 sys.path.append("..")
 
-from fastapi import Depends, HTTPException, APIRouter
+from fastapi import Depends, HTTPException, APIRouter, Request
 import models
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
@@ -10,8 +10,13 @@ from typing import Optional
 from .auth import get_current_user, get_user_exception
 from routers import auth
 
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
 
 models.Base.metadata.create_all(bind=engine)
+
+templates = Jinja2Templates(directory="templates")
 
 router =APIRouter(
     prefix="/todos",
@@ -32,6 +37,10 @@ class Todo(BaseModel):
     description: Optional[str]
     priority: int = Field(gt=0, lt=6, description="The priority must be between 1-5")
     complete: bool
+
+@router.get("/test")
+async def test(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
  
 @router.get("/")
 async def read_all(db: Session = Depends(get_db)):
